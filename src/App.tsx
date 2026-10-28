@@ -59,10 +59,21 @@ const ciScript = generateCiScript()
 
   return (
     <main className="app">
-      <header className="app__header">
-        <p className="app__brand">DocuEnv</p>
-        <span className="app__privacy">Processed locally</span>
-      </header>
+      
+<header className="app__header">
+  <div className="app__brand-group">
+    <img
+      className="app__logo"
+      src="/favicon.png"
+      alt=""
+      width="36"
+      height="36"
+    />
+    <p className="app__brand">DocuEnv</p>
+  </div>
+  <span className="app__privacy">Processed locally</span>
+</header>
+
 
       <section className="app__intro">
         <p className="app__eyebrow">ENVIRONMENT CONFIGURATION TOOL</p>
