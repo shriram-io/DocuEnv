@@ -7,9 +7,9 @@ import { readFileSync } from 'node:fs'
 const envFile = process.env.ENV_FILE ?? '.env'
 const requiredFile = process.env.REQUIRED_ENV_FILE ?? '.env.example'
 
-function readKeys(file) {
+function readEntries(file) {
   const content = readFileSync(file, 'utf8')
-  const keys = new Set()
+  const entries = new Map()
 
   for (const [index, rawLine] of content.split(/\\r?\\n/).entries()) {
     const line = rawLine.trim()
@@ -29,6 +29,7 @@ function readKeys(file) {
     }
 
     const key = normalized.slice(0, separator).trim()
+    const value = normalized.slice(separator + 1).trim()
 
     if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
       throw new Error(
@@ -36,20 +37,37 @@ function readKeys(file) {
       )
     }
 
-    keys.add(key)
+    if (entries.has(key)) {
+      throw new Error(
+        \`Duplicate environment key on line \${index + 1} in \${file}\`,
+      )
+    }
+
+    entries.set(key, value)
   }
 
-  return keys
+  return entries
 }
 
 try {
-  const actual = readKeys(envFile)
-  const required = readKeys(requiredFile)
-  const missing = [...required].filter((key) => !actual.has(key))
+  const actual = readEntries(envFile)
+  const required = readEntries(requiredFile)
+  const missing = [...required.keys()].filter((key) => !actual.has(key))
+  const empty = [...required.keys()].filter(
+    (key) => actual.has(key) && actual.get(key).trim() === '',
+  )
 
-  if (missing.length > 0) {
+  if (missing.length > 0 || empty.length > 0) {
     console.error('Environment validation failed.')
-    console.error('Missing required keys:', missing.join(', '))
+
+    if (missing.length > 0) {
+      console.error('Missing required keys:', missing.join(', '))
+    }
+
+    if (empty.length > 0) {
+      console.error('Empty required keys:', empty.join(', '))
+    }
+
     process.exitCode = 1
   } else {
     console.log('Environment validation passed.')

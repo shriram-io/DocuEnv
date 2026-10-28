@@ -7,7 +7,7 @@ describe('generateCiScript', () => {
     const output = generateCiScript()
 
     expect(output).toContain("import { readFileSync } from 'node:fs'")
-    expect(output).toContain('function readKeys(file)')
+    expect(output).toContain('function readEntries(file)')
   })
 
   it('supports configurable input file paths', () => {
@@ -20,9 +20,24 @@ describe('generateCiScript', () => {
   it('checks for missing required keys', () => {
     const output = generateCiScript()
 
-    expect(output).toContain('const missing = [...required].filter')
+    expect(output).toContain('const missing = [...required.keys()].filter')
     expect(output).toContain('Environment validation failed.')
     expect(output).toContain('Environment validation passed.')
+  })
+
+  it('checks for empty required values', () => {
+    const output = generateCiScript()
+
+    expect(output).toContain('const empty = [...required.keys()].filter')
+    expect(output).toContain("actual.get(key).trim() === ''")
+    expect(output).toContain('Empty required keys:')
+  })
+
+  it('rejects duplicate environment keys', () => {
+    const output = generateCiScript()
+
+    expect(output).toContain('if (entries.has(key))')
+    expect(output).toContain('Duplicate environment key')
   })
 
   it('does not print environment values', () => {
