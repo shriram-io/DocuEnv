@@ -1,0 +1,119 @@
+
+.file-input {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.file-input:focus-within {
+  border-color: #9bb9a9;
+  box-shadow: 0 0 0 3px rgb(49 92 76 / 8%);
+}
+
+.file-input__header {
+  padding: 20px 20px 14px;
+}
+
+.file-input__header h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.file-input__header p {
+  margin: 7px 0 0;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.file-input textarea {
+  display: block;
+  width: 100%;
+  min-height: 210px;
+  padding: 18px 20px;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  outline: none;
+  resize: vertical;
+  background: #fcfbf8;
+  color: var(--color-text);
+  font: 0.875rem/1.75 var(--font-mono);
+  tab-size: 2;
+}
+
+.file-input textarea::placeholder {
+  color: #929187;
+  opacity: 1;
+}
+
+.file-input textarea:focus-visible {
+  outline: 2px solid #9bb9a9;
+  outline-offset: -2px;
+}
+
+.file-input__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+}
+
+.file-input__footer span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.file-input__footer button {
+  min-height: 36px;
+  padding: 8px 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.file-input__footer button:hover {
+  border-color: #c4c7bb;
+  background: var(--color-code-bg);
+}
+
+.file-input__footer button:focus-visible {
+  outline: 3px solid #9bb9a9;
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .file-input__header,
+  .file-input__footer {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .file-input textarea {
+    padding-right: 14px;
+    padding-left: 14px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .file-input,
+  .file-input__footer button {
+    transition: none;
+  }
+}
