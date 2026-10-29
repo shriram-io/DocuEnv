@@ -15,7 +15,7 @@ function App() {
   const [envFileName, setEnvFileName] = useState('')
   const [exampleFileName, setExampleFileName] = useState('')
   const [analyzed, setAnalyzed] = useState(false)
-
+const [copyStatus, setCopyStatus] = useState('')
 const [typeOverrides, setTypeOverrides] = useState<
   Record<string, import('./lib/infer-type').InferredType>
 >({})
@@ -48,7 +48,17 @@ const ciScript = generateCiScript()
   function analyzeConfiguration() {
     setAnalyzed(true)
   }
-
+async function copyToClipboard(
+  text: string,
+  item: string,
+) {
+  try {
+    await navigator.clipboard.writeText(text)
+    setCopyStatus(`${item} copied successfully.`)
+  } catch {
+    setCopyStatus(`Unable to copy ${item.toLowerCase()}. Copy it manually.`)
+  }
+}
   function clearInputs() {
   setEnvContent('')
   setExampleContent('')
@@ -203,8 +213,8 @@ const ciScript = generateCiScript()
         <button
           type="button"
           onClick={() => {
-            void navigator.clipboard.writeText(zodSchema)
-          }}
+  void copyToClipboard(zodSchema, 'Schema')
+}}
         >
           Copy schema
         </button>
@@ -223,6 +233,13 @@ const ciScript = generateCiScript()
     </section>
   </div>
 )}
+
+{copyStatus && (
+  <p role="status" aria-live="polite">
+    {copyStatus}
+  </p>
+)}
+
 <section className="results-panel" aria-labelledby="ci-heading">
   <div className="results-panel__header">
     <div>
@@ -233,8 +250,8 @@ const ciScript = generateCiScript()
     <button
       type="button"
       onClick={() => {
-        void navigator.clipboard.writeText(ciScript)
-      }}
+  void copyToClipboard(ciScript, 'Script')
+}}
     >
       Copy script
     </button>
