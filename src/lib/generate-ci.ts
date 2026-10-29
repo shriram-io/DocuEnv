@@ -72,8 +72,13 @@ try {
   } else {
     console.log('Environment validation passed.')
   }
-} catch {
-  console.error('Environment validation failed. Check the input files and format.')
+    } catch (error) {
+  const message =
+    error instanceof Error
+      ? error.message
+      : 'Unknown validation error'
+
+  console.error('Environment validation failed:', message)
   process.exitCode = 1
 }
 `
