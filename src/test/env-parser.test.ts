@@ -68,7 +68,8 @@ describe('parseEnv', () => {
       { line: 1, message: 'Unclosed quoted value.' },
     ])
   })
-    it('detects duplicate variable names', () => {
+
+  it('detects duplicate variable names', () => {
     const result = parseEnv('PORT=3000\nPORT=4000')
 
     expect(result.entries).toEqual([
@@ -115,5 +116,18 @@ describe('parseEnv', () => {
     ])
     expect(result.errors).toEqual([])
   })
-})
 
+  it('does not reserve keys from invalid entries', () => {
+    const result = parseEnv(
+      'API_KEY="unfinished\nAPI_KEY=valid-value',
+    )
+
+    expect(result.entries).toEqual([
+      { key: 'API_KEY', value: 'valid-value', line: 2 },
+    ])
+
+    expect(result.errors).toEqual([
+      { line: 1, message: 'Unclosed quoted value.' },
+    ])
+  })
+})

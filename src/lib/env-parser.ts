@@ -56,16 +56,14 @@ export function parseEnv(content: string): EnvParseResult {
     }
 
     if (seenKeys.has(key)) {
-      errors.push({
-        line,
-        message: `Duplicate environment variable "${key}".`,
-      })
-      return
-    }
+  errors.push({
+    line,
+    message: `Duplicate environment variable "${key}".`,
+  })
+  return
+}
 
-    seenKeys.add(key)
-
-    const quote = value[0]
+const quote = value[0]
 
     if (quote === '"' || quote === "'") {
       const closingQuote = value.indexOf(quote, 1)
@@ -96,7 +94,7 @@ export function parseEnv(content: string): EnvParseResult {
         value = value.slice(0, commentIndex).trimEnd()
       }
     }
-
+seenKeys.add(key)
     entries.push({ key, value, line })
   })
 
