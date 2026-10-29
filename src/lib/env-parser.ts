@@ -19,15 +19,17 @@ export function parseEnv(content: string): EnvParseResult {
   const entries: EnvEntry[] = []
   const errors: EnvParseError[] = []
   const seenKeys = new Set<string>()
-
   const lines = content.split(/\r?\n/)
 
-  lines.forEach((rawLine, index) => {
-    const line = index + 1
-    const trimmed = rawLine.trim()
+  let index = 0
+
+  while (index < lines.length) {
+    const lineNumber = index + 1
+    const trimmed = lines[index].trim()
 
     if (!trimmed || trimmed.startsWith('#')) {
-      return
+      index++
+      continue
     }
 
     const normalized = trimmed.startsWith('export ')
@@ -38,10 +40,11 @@ export function parseEnv(content: string): EnvParseResult {
 
     if (separator === -1) {
       errors.push({
-        line,
+        line: lineNumber,
         message: 'Missing "=" separator.',
       })
-      return
+      index++
+      continue
     }
 
     const key = normalized.slice(0, separator).trim()
@@ -49,60 +52,95 @@ export function parseEnv(content: string): EnvParseResult {
 
     if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
       errors.push({
-        line,
+        line: lineNumber,
         message: 'Invalid environment variable name.',
       })
-      return
+      index++
+      continue
     }
 
     if (seenKeys.has(key)) {
-  errors.push({
-    line,
-    message: `Duplicate environment variable "${key}".`,
-  })
-  return
-}
+      errors.push({
+        line: lineNumber,
+        message: `Duplicate environment variable "${key}".`,
+      })
+      index++
+      continue
+    }
 
-const quote = value[0]
+    const quote = value[0]
 
     if (quote === '"' || quote === "'") {
       let closingQuote = -1
+      let searchFrom = 1
 
-for (let i = 1; i < value.length; i++) {
-  if (value[i] === '\\' && quote === '"') {
-    i++
-    continue
-  }
+      const findClosingQuote = (): number => {
+        while (searchFrom < value.length) {
+          const candidate = value.indexOf(quote, searchFrom)
 
-  if (value[i] === quote) {
-    closingQuote = i
-    break
-  }
-}
+          if (candidate === -1) return -1
+
+          if (
+            quote === '"' &&
+            candidate > 0 &&
+            value[candidate - 1] === '\\'
+          ) {
+            searchFrom = candidate + 1
+            continue
+          }
+
+          return candidate
+        }
+
+        return -1
+      }
+
+
+      while (closingQuote === -1 && index + 1 < lines.length) {
+        const nextLine = lines[index + 1]
+
+        // Recover if the current quote is unclosed and a new
+        // environment-variable assignment begins on the next line.
+        if (
+          /^\s*(?:export\s+)?[A-Za-z_][A-Za-z0-9_]*\s*=/.test(
+            nextLine,
+          )
+        ) {
+          break
+        }
+
+        index++
+        value += `\n${lines[index]}`
+
+        searchFrom = value.length - lines[index].length
+        closingQuote = findClosingQuote()
+      }
 
       if (closingQuote === -1) {
         errors.push({
-          line,
+          line: lineNumber,
           message: 'Unclosed quoted value.',
         })
-        return
+        index++
+        continue
       }
 
       const trailing = value.slice(closingQuote + 1).trim()
 
       if (trailing && !trailing.startsWith('#')) {
         errors.push({
-          line,
+          line: lineNumber,
           message: 'Unexpected text after quoted value.',
         })
-        return
+        index++
+        continue
       }
 
       value = value.slice(1, closingQuote)
 
-if (quote === '"') {
-  value = value.replace(/\\(["\\])/g, '$1')
-}
+      if (quote === '"') {
+        value = value.replace(/\\(["\\])/g, '$1')
+      }
     } else {
       const commentIndex = value.indexOf(' #')
 
@@ -110,9 +148,11 @@ if (quote === '"') {
         value = value.slice(0, commentIndex).trimEnd()
       }
     }
-seenKeys.add(key)
-    entries.push({ key, value, line })
-  })
+
+    seenKeys.add(key)
+    entries.push({ key, value, line: lineNumber })
+    index++
+  }
 
   return { entries, errors }
 }

@@ -93,7 +93,19 @@ describe('parseEnv', () => {
       { line: 1, message: 'Unclosed quoted value.' },
     ])
   })
+it('supports multiline double-quoted values', () => {
+  const result = parseEnv('PRIVATE_KEY="line one\nline two\nline three"')
 
+  expect(result.entries).toEqual([
+    {
+      key: 'PRIVATE_KEY',
+      value: 'line one\nline two\nline three',
+      line: 1,
+    },
+  ])
+
+  expect(result.errors).toEqual([])
+})
   it('detects duplicate variable names', () => {
     const result = parseEnv('PORT=3000\nPORT=4000')
 
