@@ -50,12 +50,13 @@ const ciScript = generateCiScript()
   }
 
   function clearInputs() {
-    setEnvContent('')
-    setExampleContent('')
-    setEnvFileName('')
-    setExampleFileName('')
-    setAnalyzed(false)
-  }
+  setEnvContent('')
+  setExampleContent('')
+  setEnvFileName('')
+  setExampleFileName('')
+  setTypeOverrides({})
+  setAnalyzed(false)
+}
 
   return (
     <main className="app">

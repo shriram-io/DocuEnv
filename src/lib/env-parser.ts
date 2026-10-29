@@ -71,36 +71,33 @@ export function parseEnv(content: string): EnvParseResult {
     const quote = value[0]
 
     if (quote === '"' || quote === "'") {
-      let closingQuote = -1
-      let searchFrom = 1
 
-      const findClosingQuote = (): number => {
-        while (searchFrom < value.length) {
-          const candidate = value.indexOf(quote, searchFrom)
-
-          if (candidate === -1) return -1
-
+      const findClosingQuote = (start: number): number => {
+        for (let i = start; i < value.length; i++) {
           if (
             quote === '"' &&
-            candidate > 0 &&
-            value[candidate - 1] === '\\'
+            value[i] === '\\' &&
+            i + 1 < value.length
           ) {
-            searchFrom = candidate + 1
+            i++
             continue
           }
 
-          return candidate
+          if (value[i] === quote) {
+            return i
+          }
         }
 
         return -1
       }
 
+      let closingQuote = findClosingQuote(1)
 
       while (closingQuote === -1 && index + 1 < lines.length) {
         const nextLine = lines[index + 1]
 
-        // Recover if the current quote is unclosed and a new
-        // environment-variable assignment begins on the next line.
+        // Do not consume a new assignment when recovering from
+        // an unclosed quoted value.
         if (
           /^\s*(?:export\s+)?[A-Za-z_][A-Za-z0-9_]*\s*=/.test(
             nextLine,
@@ -111,9 +108,7 @@ export function parseEnv(content: string): EnvParseResult {
 
         index++
         value += `\n${lines[index]}`
-
-        searchFrom = value.length - lines[index].length
-        closingQuote = findClosingQuote()
+        closingQuote = findClosingQuote(value.length - lines[index].length)
       }
 
       if (closingQuote === -1) {
