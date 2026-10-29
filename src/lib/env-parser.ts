@@ -66,7 +66,19 @@ export function parseEnv(content: string): EnvParseResult {
 const quote = value[0]
 
     if (quote === '"' || quote === "'") {
-      const closingQuote = value.indexOf(quote, 1)
+      let closingQuote = -1
+
+for (let i = 1; i < value.length; i++) {
+  if (value[i] === '\\' && quote === '"') {
+    i++
+    continue
+  }
+
+  if (value[i] === quote) {
+    closingQuote = i
+    break
+  }
+}
 
       if (closingQuote === -1) {
         errors.push({
@@ -87,6 +99,10 @@ const quote = value[0]
       }
 
       value = value.slice(1, closingQuote)
+
+if (quote === '"') {
+  value = value.replace(/\\(["\\])/g, '$1')
+}
     } else {
       const commentIndex = value.indexOf(' #')
 

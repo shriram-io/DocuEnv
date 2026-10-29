@@ -60,7 +60,14 @@ describe('parseEnv', () => {
       'hello world',
     ])
   })
+it('supports escaped quotes inside double-quoted values', () => {
+  const result = parseEnv('MESSAGE="He said \\"hello\\""')
 
+  expect(result.entries).toEqual([
+    { key: 'MESSAGE', value: 'He said "hello"', line: 1 },
+  ])
+  expect(result.errors).toEqual([])
+})
   it('reports unclosed quoted values', () => {
     const result = parseEnv('API_KEY="unfinished')
 
