@@ -19,7 +19,7 @@ export default function FileInput({
   onFileNameChange,
 }: FileInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-
+const fieldId = title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
   async function handleFileChange(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
@@ -40,14 +40,16 @@ export default function FileInput({
         <p>{description}</p>
       </div>
 
-      <textarea
-        aria-label={title}
-        spellCheck={false}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={'API_URL=https://example.com\nPORT=3000'}
-        rows={9}
-      />
+<textarea
+  id={`${fieldId}-content`}
+  name={`${fieldId}-content`}
+  aria-label={title}
+  spellCheck={false}
+  value={value}
+  onChange={(event) => onChange(event.target.value)}
+  placeholder={'API_URL=https://example.com\nPORT=3000'}
+  rows={9}
+/>
 
       <div className="file-input__footer">
         <span>{fileName || 'No file selected'}</span>
@@ -59,14 +61,16 @@ export default function FileInput({
           Import file
         </button>
 
-        <input
-          ref={inputRef}
-          type="file"
-          accept=".env,.example,.txt"
-          hidden
-          onChange={handleFileChange}
-          aria-label={`Import ${title}`}
-        />
+<input
+  id={`${fieldId}-file`}
+  name={`${fieldId}-file`}
+  ref={inputRef}
+  type="file"
+  accept=".env,.example,.txt"
+  hidden
+  onChange={handleFileChange}
+  aria-label={`Import ${title}`}
+/>
       </div>
     </section>
   )
