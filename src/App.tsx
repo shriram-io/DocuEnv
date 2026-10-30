@@ -1,7 +1,9 @@
 
 import { useState } from 'react'
 import './App.css'
-
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import Terms from './pages/Terms'
+import FAQ from './pages/FAQ'
 import FileInput from './components/FileInput'
 import ResultsPanel from './components/ResultsPanel'
 import { parseEnv } from './lib/env-parser'
@@ -11,6 +13,9 @@ import { generateZodSchema } from './lib/generate-zod'
 import { generateCiScript } from './lib/generate-ci'
 
 function App() {
+  const [currentPage, setCurrentPage] = useState<
+  'home' | 'privacy' | 'terms' | 'faq'
+>('home')
   const [envContent, setEnvContent] = useState('')
   const [exampleContent, setExampleContent] = useState('')
   const [envFileName, setEnvFileName] = useState('')
@@ -20,7 +25,16 @@ function App() {
   const [typeOverrides, setTypeOverrides] = useState<
     Record<string, InferredType>
   >({})
+if (currentPage === 'privacy') {
+  return <PrivacyPolicy onBack={() => setCurrentPage('home')} />
+}
 
+if (currentPage === 'terms') {
+  return <Terms onBack={() => setCurrentPage('home')} />
+}
+if (currentPage === 'faq') {
+  return <FAQ onBack={() => setCurrentPage('home')} />
+}
   const envResult = parseEnv(envContent)
   const exampleResult = parseEnv(exampleContent)
   const comparison = compareEnv(envResult.entries, exampleResult.entries)
@@ -282,9 +296,39 @@ function App() {
         </div>
       )}
 
-      <footer className="app__footer">
-        DocuEnv · Environment values stay in your browser.
-      </footer>
+<footer className="app__footer">
+  <span>
+    © {new Date().getFullYear()} DocuEnv · Environment values stay in your browser.
+  </span>
+
+  <nav aria-label="Site information">
+  <button
+    type="button"
+    onClick={() => setCurrentPage('faq')}
+  >
+    FAQ
+  </button>
+
+  <button
+    type="button"
+    onClick={() => setCurrentPage('privacy')}
+  >
+    Privacy Policy
+  </button>
+
+  <button
+    type="button"
+    onClick={() => setCurrentPage('terms')}
+  >
+    Terms of Use
+  </button>
+  <a
+  href="mailto:shriram.project1@gmail.com?subject=DocuEnv%20Support%20Request"
+>
+  Contact Support
+</a>
+</nav>
+</footer>
     </main>
   )
 }
