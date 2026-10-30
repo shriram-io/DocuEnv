@@ -7,7 +7,30 @@ DocuEnv is a privacy-first developer utility that compares environment-variable 
 [**Live Demo →**](https://docuenv.pages.dev) · [**GitHub Repository**](https://github.com/shriram-io/DocuEnv) · [**Latest Release: v1.1.0**](https://github.com/shriram-io/DocuEnv/releases/tag/v1.1.0)
 
 ---
+## Application Preview
 
+### Homepage
+![DocuEnv Homepage](screenshots/homepage.png)
+
+### Configuration Analysis
+![Configuration Inputs](screenshots/configuration-inputs.png)
+
+![Configuration Analysis](screenshots/configuration-analysis.png)
+
+### Type Inference
+![Type Inference](screenshots/type-inference.png)
+
+### Generated Zod Schema
+![Zod Schema](screenshots/zod-schema.png)
+
+### CI Validation
+![CI Validation](screenshots/ci-validation-1.png)
+
+![CI Validation](screenshots/ci-validation-2.png)
+
+![CI Validation](screenshots/ci-validation-3.png)
+
+---
 ## Features
 
 - **Local file import and paste:** Load `.env` and `.env.example` files directly in your browser.
