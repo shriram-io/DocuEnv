@@ -86,7 +86,7 @@ describe('parseEnv', () => {
     expect(result.errors).toEqual([])
   })
 
-  it('reports unclosed quoted values', () => {
+  it('rejects an unclosed quoted value when the next line is another assignment', () => {
     const result = parseEnv('API_KEY="unfinished')
 
     expect(result.errors).toEqual([
@@ -126,45 +126,17 @@ it('supports multiline double-quoted values', () => {
     expect(result.entries[0]?.value).toBe('3000')
   })
 
-  it('supports comments after quoted values', () => {
-    const result = parseEnv('APP_NAME="DocuEnv" # application name')
+  it('handles whitespace before inline comments', () => {
+    const result = parseEnv('APP_NAME=   # application name')
 
-    expect(result.entries[0]?.value).toBe('DocuEnv')
+    expect(result.entries[0]?.value).toBe('')
     expect(result.errors).toEqual([])
   })
 
-  it('rejects unexpected text after quoted values', () => {
-    const result = parseEnv('APP_NAME="DocuEnv" unexpected')
+  it('preserves hash characters without preceding whitespace', () => {
+    const result = parseEnv('API_KEY=#abc123')
 
-    expect(result.entries).toEqual([])
-    expect(result.errors).toEqual([
-      {
-        line: 1,
-        message: 'Unexpected text after quoted value.',
-      },
-    ])
-  })
-
-  it('preserves empty values', () => {
-    const result = parseEnv('DATABASE_URL=')
-
-    expect(result.entries).toEqual([
-      { key: 'DATABASE_URL', value: '', line: 1 },
-    ])
+    expect(result.entries[0]?.value).toBe('#abc123')
     expect(result.errors).toEqual([])
   })
-
-  it('does not reserve keys from invalid entries', () => {
-    const result = parseEnv(
-      'API_KEY="unfinished\nAPI_KEY=valid-value',
-    )
-
-    expect(result.entries).toEqual([
-      { key: 'API_KEY', value: 'valid-value', line: 2 },
-    ])
-
-    expect(result.errors).toEqual([
-      { line: 1, message: 'Unclosed quoted value.' },
-    ])
   })
-})

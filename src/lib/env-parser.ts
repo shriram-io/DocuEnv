@@ -48,7 +48,8 @@ export function parseEnv(content: string): EnvParseResult {
     }
 
     const key = normalized.slice(0, separator).trim()
-    let value = normalized.slice(separator + 1).trim()
+    const rawValue = normalized.slice(separator + 1)
+    let value = rawValue.trim()
 
     if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
       errors.push({
@@ -137,10 +138,10 @@ export function parseEnv(content: string): EnvParseResult {
         value = value.replace(/\\(["\\])/g, '$1')
       }
     } else {
-      const commentIndex = value.indexOf(' #')
+      const commentIndex = rawValue.search(/\s+#/)
 
       if (commentIndex !== -1) {
-        value = value.slice(0, commentIndex).trimEnd()
+        value = rawValue.slice(0, commentIndex).trim()
       }
     }
 
