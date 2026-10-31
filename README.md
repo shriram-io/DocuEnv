@@ -4,6 +4,7 @@
 
 DocuEnv is a privacy-first developer utility that compares environment-variable configurations, identifies missing and extra keys, suggests likely value types, and generates Zod schemas and CI validation scripts.
 
+![Latest Release](https://img.shields.io/github/v/release/shriram-io/DocuEnv?label=latest%20release)
 [**Live Demo →**](https://docuenv.pages.dev) · [**GitHub Repository**](https://github.com/shriram-io/DocuEnv) · [**Latest Release: v1.1.0**](https://github.com/shriram-io/DocuEnv/releases/tag/v1.1.0)
 
 ---
