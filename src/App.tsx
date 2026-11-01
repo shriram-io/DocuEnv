@@ -108,12 +108,10 @@ if (currentPage === 'faq') {
 
       <section className="app__intro">
         <p className="app__eyebrow">ENVIRONMENT CONFIGURATION TOOL</p>
-        <h1>Know what your environment needs.</h1>
+        <h1>Validate your .env configuration before deployment.</h1>
         <p>
-          Compare your environment configuration with its example,
-          identify missing variables, and prepare reliable validation
-          for your project.
-        </p>
+  DocuEnv is a free, privacy-first environment variable checker. Compare .env and .env.example files, find missing or extra variables, review type suggestions, and generate Zod schemas and CI validation scripts—all locally in your browser.
+</p>
       </section>
 
       <section aria-labelledby="workspace-heading">
